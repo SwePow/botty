@@ -37,10 +37,12 @@ class Diablo:
 
     def approach(self, start_loc: Location) -> Union[bool, Location, bool]:
         Logger.info("Run Diablo /!\ BETA Version /!\ please do not run without supervision.")
+        # Logger.debug("Testing Cleansing")
+        # self._char.cleansing() # WiZ tuning  
         if not self._char.can_teleport():
             raise ValueError("Diablo requires teleport")
         if not self._town_manager.open_wp(start_loc):
-            return False
+            return False   
         wait(0.4)
         self._ui_manager.use_wp(4, 2)
         return Location.A4_DIABLO_WP
@@ -72,14 +74,13 @@ class Diablo:
 
     # WiZ speed version
     def _river_of_flames(self) -> bool:
-        if not self._pather.traverse_nodes([600], self._char): return False
-        Logger.debug("Calibrated at WAYPOINT")
+        # if not self._pather.traverse_nodes([600], self._char): return False
         self._pather.traverse_nodes_fixed("diablo_wp_pentagram", self._char)
         Logger.info("Teleporting directly to PENTAGRAM")
         found = False
         self._char.kill_cs_trash() # WiZ tuning
         Logger.info("Pentagram clearing") # WiZ tuning
-        wait(0.2) # WiZ tuning
+        wait(0.1) # WiZ tuning
         templates = ["DIA_NEW_PENT_0", "DIA_NEW_PENT_1", "DIA_NEW_PENT_2", "DIA_NEW_PENT_3", "DIA_NEW_PENT_5", "DIA_NEW_PENT_6"]
         # Looping in smaller teleport steps to make sure we find the pentagram
         start_time = time.time()
@@ -107,10 +108,11 @@ class Diablo:
             # return False
         self._pather.traverse_nodes([602], self._char, threshold=0.82)
         Logger.info("Calibrated at PENTAGRAM")
-        self._char.kill_cs_trash_pentagram() # WiZ tuning
-        Logger.info("Pentagram cleared") # WiZ tuning
+        self._char.kill_cs_trash_burst() # WiZ tuning
+        Logger.info("Pentagram cleared, cleansing and looting!") # WiZ tuning
+        self._char.cleansing() # WiZ tuning 
         self._picked_up_items |= self._pickit.pick_up_items(self._char) # WiZ tuning
-        wait(0.2) # WiZ tuning
+        wait(0.5) # WiZ tuning
         return True
 
     def _loop_pentagram(self, path) -> bool:
@@ -126,6 +128,7 @@ class Diablo:
         return True
 
     def _sealdance(self, seal_opentemplates: list[str], seal_closedtemplates: list[str], seal_layout: str) -> bool:
+        self._char.kill_cs_trash_burst() # WiZ tuning
         i = 0
         while i < 6: #increased to 6 from 4
             # try to select seal
@@ -143,8 +146,8 @@ class Diablo:
                 mouse.move(*pos_m, randomize=[90, 160])
                 wait(0.3)
                 if i >= 2:
-                    Logger.info(seal_layout + ": failed " + str(i+2) + " of 7 times, trying to kill trash now")
-                    self._char.kill_cs_trash()
+                    Logger.info(seal_layout + ": failed " + str(i+2) + " of 7 times, trying to kill some trash now")
+                    self._char.kill_cs_trash_burst()
                     wait(i) #let the hammers clear & check the template -> the more tries, the longer the wait
                 else:
                     # do a little random hop & try to click the seal
@@ -181,6 +184,7 @@ class Diablo:
         if not self._loop_pentagram("dia_a1l_home_loop"): return False
         if not self._pather.traverse_nodes([602], self._char): return False
         Logger.info(seal_layout + ": finished seal & calibrated at PENTAGRAM")
+        self._char.cleansing() # WiZ tuning 
         if self._config.general["info_screenshots"]: cv2.imwrite(f"./info_screenshots/calibrated_pentagram_after_" + seal_layout + "_" + time.strftime("%Y%m%d_%H%M%S") + ".png", self._screen.grab())
         return True
 
@@ -209,6 +213,7 @@ class Diablo:
         if not self._loop_pentagram("dia_a2y_home_loop"): return False
         if not self._pather.traverse_nodes([602], self._char): return False
         Logger.info(seal_layout + ": finished seal & calibrated at PENTAGRAM")
+        self._char.cleansing() # WiZ tuning 
         if self._config.general["info_screenshots"]: cv2.imwrite(f"./info_screenshots/calibrated_pentagram_after_" + seal_layout + "_" + time.strftime("%Y%m%d_%H%M%S") + ".png", self._screen.grab())
         return True
 
@@ -231,6 +236,7 @@ class Diablo:
         if not self._loop_pentagram("dia_b1s_home_loop"): return False
         if not self._pather.traverse_nodes([602], self._char): return False
         Logger.info(seal_layout + ": finished seal & calibrated at PENTAGRAM")
+        self._char.cleansing() # WiZ tuning 
         if self._config.general["info_screenshots"]: cv2.imwrite(f"./info_screenshots/calibrated_pentagram_after_" + seal_layout + "_" + time.strftime("%Y%m%d_%H%M%S") + ".png", self._screen.grab())
         return True
 
@@ -255,6 +261,7 @@ class Diablo:
         if not self._loop_pentagram("dia_b2u_home_loop"): return False
         if not self._pather.traverse_nodes([602], self._char): return False
         Logger.info(seal_layout + ": finished seal & calibrated at PENTAGRAM")
+        self._char.cleansing() # WiZ tuning 
         if self._config.general["info_screenshots"]: cv2.imwrite(f"./info_screenshots/calibrated_pentagram_after_" + seal_layout + "_" + time.strftime("%Y%m%d_%H%M%S") + ".png", self._screen.grab())
         return True
 
@@ -278,6 +285,7 @@ class Diablo:
         if not self._loop_pentagram("dia_c1f_home_loop"): return False
         if not self._pather.traverse_nodes([602], self._char): return False
         Logger.info(seal_layout + ": finished seal & calibrated at PENTAGRAM")
+        self._char.cleansing() # WiZ tuning 
         if self._config.general["info_screenshots"]: cv2.imwrite(f"./info_screenshots/calibrated_pentagram_after_" + seal_layout + "_" + time.strftime("%Y%m%d_%H%M%S") + ".png", self._screen.grab())
         return True
 
@@ -302,6 +310,7 @@ class Diablo:
         if not self._loop_pentagram("dia_c2g_home_loop"): return False
         if not self._pather.traverse_nodes([602], self._char): return False
         Logger.info(seal_layout + ": finished seal & calibrated at PENTAGRAM")
+        self._char.cleansing() # WiZ tuning 
         if self._config.general["info_screenshots"]: cv2.imwrite(f"./info_screenshots/calibrated_pentagram_after_" + seal_layout + "_" + time.strftime("%Y%m%d_%H%M%S") + ".png", self._screen.grab())
         return True
 

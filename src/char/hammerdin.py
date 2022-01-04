@@ -129,7 +129,7 @@ class Hammerdin(IChar):
         return True
 
     def kill_nihlatak(self, end_nodes: list[int]) -> bool:
-        # Move close to nilathak
+        # Move close to nihlatak
         self._pather.traverse_nodes(end_nodes, self, time_out=0.8, do_pre_move=False)
         # move mouse to center, otherwise hammers sometimes dont fly, not sure why
         pos_m = self._screen.convert_abs_to_monitor((0, 0))
@@ -158,19 +158,31 @@ class Hammerdin(IChar):
         #self._cast_hammers(1.2, "cleansing") # would make sense to add cleansing to CS, due to the tons of curses (that also interfere with the seal logic)
         return True
         
-    def kill_cs_trash_pentagram(self) -> bool:
+    def kill_cs_trash_burst(self) -> bool:
         # move mouse to center, otherwise hammers sometimes dont fly, not sure why
         pos_m = self._screen.convert_abs_to_monitor((0, 0))
         mouse.move(*pos_m, randomize=80, delay_factor=[0.5, 0.7])
         self._cast_hammers(self._char_config["atk_len_cs_trashmobs"] * 0.2)
         self._cast_hammers(0.8, "redemption")
-        self._move_and_attack((30, 15), self._char_config["atk_len_cs_trashmobs"] * 0.2)
-        self._cast_hammers(0.8, "redemption")
-        self._move_and_attack((-30, -15), self._char_config["atk_len_cs_trashmobs"] * 0.1)
-        wait(0.1, 0.15)
-        self._cast_hammers(2, "redemption")
         #self._cast_hammers(1.2, "cleansing") # would make sense to add cleansing to CS, due to the tons of curses (that also interfere with the seal logic)
         return True    
+        
+    def cleansing(self) -> bool:
+        pos_m = self._screen.convert_screen_to_monitor((684, 693)) # right skill position
+        mouse.move(*pos_m, randomize=10, delay_factor=[0.5, 0.7]) # move mouse there
+        wait(0.1)
+        mouse.click(button="left") # left click to open it up
+        pos_m = self._screen.convert_screen_to_monitor((320, 180)) # top left quadrant
+        mouse.move(*pos_m, randomize=80, delay_factor=[0.5, 0.7]) # move away mouse to remove the hover tooltip
+        wait(0.1)
+        cleansing = self._template_finder.search(ref="CLEANSING", inp_img=self._screen.grab(), threshold=0.8, roi=self._config.ui_roi["skill_right_open"], )
+        if cleansing.valid:
+            Logger.debug("Found Cleansing Skill - Using It!")
+            pos_m = self._screen.convert_screen_to_monitor(cleansing.position)
+            mouse.move(*pos_m, randomize=10, delay_factor=[0.5, 0.7]) # move mouse to cleansing icon
+            wait(0.1)
+            mouse.click(button="left") # left click to select it 
+        return True      
     
     def kill_vizier(self, nodes1: list[int], nodes2: list[int]) -> bool: #seal_layout,
         #if seal_layout == "A1-L":

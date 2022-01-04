@@ -250,6 +250,7 @@ class Bot:
                 Logger.info("Identifying items")
                 self._curr_loc = self._town_manager.identify(self._curr_loc)
                 if not self._curr_loc:
+                    Logger.info("Cannot identify town - ending game in 3 seconds")
                     return self.trigger_or_stop("end_game", failed=True)
             Logger.info("Stashing items")
             self._curr_loc = self._town_manager.stash(self._curr_loc)
